@@ -106,7 +106,11 @@ class MediatorHttpServer:
         return '\n'.join(tabs)
 
     def move_tabs(self, move_triplets):
-        return self.remote_api.move_tabs(unquote_plus(move_triplets))
+        try:
+            return self.remote_api.move_tabs(unquote_plus(move_triplets))
+        except ValueError as exc:
+            mediator_logger.info('Error parsing triplets:' + str(exc))
+            return 'Error moving tabs', 500
 
     def open_urls(self, window_id=None):
         urls = request.files.get('urls')
